@@ -7,7 +7,7 @@ Native swapping previously passed on version 1.4.1; see NATIVE-APPS.txt.
 Optional prebuilt CLI packages: run quest-termux, then pkg install PACKAGE.
 This shares the runtime home/workspace and requires no APK update. See TERMUX.txt.
 
-QUEST DEVELOPER RUNTIME 1.5.2 — experimental private SDK 28 app
+QUEST DEVELOPER RUNTIME 1.5.3 — experimental private SDK 28 app
 ========================================================
 
 CONNECT FROM A MACHINE IN YOUR TAILNET
@@ -352,3 +352,9 @@ Runtime: version 1.5.2 (code 9), with Horizon SDK 69 declarations and labeled
 d79e5bd7b54a22496d6f3837106630953abe1d83b537afae71a1c1b02fc1d197
 Telemetry delivery: quest_env commit 3d1ca98.
 The missing Meta app name is unresolved; no registered App ID is configured.
+
+1.5.3 placement experiment: terminal creation no longer requests
+FLAG_ACTIVITY_LAUNCH_ADJACENT. Pair with quest_env e9b74f3, which also clears
+that flag from saved task intents during restoration. Build and launch checks
+pass; the effect on Quest docking awaits user validation. The usable-2026-10-20
+tag retains the previous validated 1.5.2 checkpoint.

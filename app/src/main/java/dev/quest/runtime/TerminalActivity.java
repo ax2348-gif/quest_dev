@@ -24,7 +24,7 @@ public final class TerminalActivity extends Activity {
         if(id==null)id=UUID.randomUUID().toString();
         context.startActivity(new Intent(context,TerminalActivity.class)
             .setData(Uri.parse("quest-terminal://session/"+id))
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_NEW_DOCUMENT|Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT));
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_NEW_DOCUMENT));
     }
     @Override public void onCreate(Bundle state){
         super.onCreate(state);

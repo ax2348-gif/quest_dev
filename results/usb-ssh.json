@@ -1,0 +1,11 @@
+{
+  "shell": "uid=10156(u0_a156) gid=10156(u0_a156) groups=10156(u0_a156),3003(inet),9997(everybody),20156(u0_a156_cache),50156(all_a156) context=u:r:untrusted_app_27:s0:c156,c256,c512,c768\n/data/user/0/dev.quest.runtime/files/home\nHOME=/data/user/0/dev.quest.runtime/files/home\nPATH=/data/user/0/dev.quest.runtime/files/home/bin:/system/bin\nrsync  version 3.5.1  protocol version 33\nCopyright (C) 1996-2026 by Andrew Tridgell, Wayne Davison, and others.\nWeb site: https://rsync.samba.org/\nCapabilities:\n    64-bit files, 64-bit inums, 64-bit timestamps, 64-bit long ints,\n    no socketpairs, symlinks, symtimes, hardlinks, no hardlink-specials,\n    no hardlink-symlinks, IPv6, atimes, batchfiles, inplace, append, no ACLs,\n    no xattrs, optional secluded-args, no iconv, prealloc, stop-at,\n    no crtimes, no IDN\nOptimizations:\n    no SIMD-roll, no asm-roll, no openssl-crypto, no asm-MD5\nChecksum list:\n    md5 md4 none\nCompress list:\n    zlibx zlib none\nDaemon auth list:\n    md5 md4\n\nrsync comes with ABSOLUTELY NO WARRANTY.  This is free software, and you\nare welcome to redistribute it under certain conditions.  See the GNU\nGeneral Public Licence for details.\n",
+  "exit_code": 7,
+  "interactive_pty": true,
+  "rsync_sha256": "ce5627251d14d62ea2136b30f799c67e07dfb5db57d0c13802b0ec4c9e287b52",
+  "uploaded_native": "uid=10156 gid=10156 pid=5854\nselinux=u:r:untrusted_app_27:s0:c156,c256,c512,c768\ncwd=/data/user/0/dev.quest.runtime/files/home\nprobe_stdout\n",
+  "no_key_denied": true,
+  "root_login_denied": true,
+  "untrusted_key_denied": true,
+  "transport": "ADB shell -T nc to Quest's own Tailscale IP; not a cross-tailnet test"
+}

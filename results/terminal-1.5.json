@@ -1,0 +1,16 @@
+{
+  "version": "1.5",
+  "version_code": 7,
+  "apk_sha256": "46040df4570c72b2d3d0f026a24badfbca91323258cb2550f403a8fd8bfc3e57",
+  "full_gradle_build": "passed",
+  "required_apk_classes_libraries_assets": "passed",
+  "update_install": "passed",
+  "main_activity_launch": "passed",
+  "ssh_login_after_update": "passed",
+  "observed_local_shell_pids": [16422, 16816],
+  "observed_terminal_task_ids": [450, 452],
+  "two_separate_panels": "visually verified on Quest screenshot",
+  "passthrough_visible_through_terminal": "visually verified on Quest screenshot",
+  "keyboard_command_execution": "echo and ls output visibly rendered",
+  "git_curl_wget": "sources downloaded, not included"
+}

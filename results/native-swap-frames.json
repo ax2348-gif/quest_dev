@@ -1,0 +1,214 @@
+{
+  "before": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [
+      13943
+    ],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+    "last_load": {
+      "pid": 13943,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+      "detail": "Quest telemetry"
+    },
+    "last_load_process_alive": true
+  },
+  "first": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [
+      14478
+    ],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+    "last_load": {
+      "pid": 14478,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+      "detail": "Quest telemetry"
+    },
+    "last_load_process_alive": true,
+    "launch_requested": true
+  },
+  "first_frame": {
+    "schema": "teleop.quest_state.v1",
+    "session_id": "3525317575037",
+    "frame_seq": 0,
+    "sample_time_ns": 3525333978285,
+    "reference_space": "local",
+    "head": {
+      "position_valid": true,
+      "orientation_valid": true,
+      "position_tracked": true,
+      "orientation_tracked": true,
+      "pose": [
+        0.984105,
+        -0.075966,
+        0.160522,
+        0.02742,
+        -0.086643,
+        0.583636,
+        0.80738,
+        0.07929,
+        -0.155019,
+        -0.808455,
+        0.567777,
+        0.051467,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "hands": {
+      "left": {
+        "pose_source": "tracked_remote",
+        "active": false,
+        "position_valid": false,
+        "orientation_valid": false,
+        "position_tracked": false,
+        "orientation_tracked": false,
+        "pose": null,
+        "trigger": 0.0,
+        "grip": 0.0,
+        "joystick": [
+          0.0,
+          0.0
+        ],
+        "buttons": {
+          "primary": false,
+          "secondary": false,
+          "thumb_rest": false,
+          "stick": false
+        }
+      },
+      "right": {
+        "pose_source": "tracked_remote",
+        "active": false,
+        "position_valid": false,
+        "orientation_valid": false,
+        "position_tracked": false,
+        "orientation_tracked": false,
+        "pose": null,
+        "trigger": 0.0,
+        "grip": 0.0,
+        "joystick": [
+          0.0,
+          0.0
+        ],
+        "buttons": {
+          "primary": false,
+          "secondary": false,
+          "thumb_rest": false,
+          "stick": false
+        }
+      }
+    }
+  },
+  "second": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [
+      14619
+    ],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+    "last_load": {
+      "pid": 14619,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+      "detail": "Quest telemetry B"
+    },
+    "last_load_process_alive": true,
+    "launch_requested": true
+  },
+  "second_frame": {
+    "schema": "teleop.quest_state.v1",
+    "session_id": "3528789631737",
+    "frame_seq": 17,
+    "sample_time_ns": 3529036432417,
+    "reference_space": "local",
+    "head": {
+      "position_valid": true,
+      "orientation_valid": true,
+      "position_tracked": true,
+      "orientation_tracked": true,
+      "pose": [
+        0.99332,
+        -0.053045,
+        0.102476,
+        0.002912,
+        0.044555,
+        0.995517,
+        0.083426,
+        -0.000123,
+        -0.106442,
+        -0.078303,
+        0.991231,
+        -0.002248,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    },
+    "hands": {
+      "left": {
+        "pose_source": "tracked_remote",
+        "active": false,
+        "position_valid": false,
+        "orientation_valid": false,
+        "position_tracked": false,
+        "orientation_tracked": false,
+        "pose": null,
+        "trigger": 0.0,
+        "grip": 0.0,
+        "joystick": [
+          0.0,
+          0.0
+        ],
+        "buttons": {
+          "primary": false,
+          "secondary": false,
+          "thumb_rest": false,
+          "stick": false
+        }
+      },
+      "right": {
+        "pose_source": "tracked_remote",
+        "active": false,
+        "position_valid": false,
+        "orientation_valid": false,
+        "position_tracked": false,
+        "orientation_tracked": false,
+        "pose": null,
+        "trigger": 0.0,
+        "grip": 0.0,
+        "joystick": [
+          0.0,
+          0.0
+        ],
+        "buttons": {
+          "primary": false,
+          "secondary": false,
+          "thumb_rest": false,
+          "stick": false
+        }
+      }
+    }
+  },
+  "stopped": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+    "last_load": {
+      "pid": 14619,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+      "detail": "Quest telemetry B"
+    },
+    "last_load_process_alive": false,
+    "result": "XR process stopped; SSH remains running"
+  },
+  "passed": true
+}

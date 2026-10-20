@@ -1,0 +1,23 @@
+{
+  "apk_sha256": "96d07b8713f37edc3d29df2f5a54f93eb8c5235d043541a001b69845bd19594e",
+  "user_public_keys_installed": 2,
+  "temporary_test_key_removed": false,
+  "external_tailnet_test": "user confirmed on version 1.0; version 1.1 preserves the SSH implementation and authorized keys",
+  "previous_apk_sha256": "f189f433c57e8848bd61bdfcb926541435766fe5ddd7c86a90f6fedb09b81edc",
+  "version": "1.4.1",
+  "autostart_after_apk_update": "SSH recovered after in-place update to 1.4.1",
+  "autostart_after_reboot": "passed on version 1.1; not repeated after container integration",
+  "erid_key_authorized": true,
+  "erid_key_fingerprint": "SHA256:rh/uNZgKlKNHX4v5UoqPCP13Hqrwt+Ogq3hTShxU92c",
+  "erid_key_authentication": "passed via USB byte proxy after reboot",
+  "key_authorization_note": "Initially removed after tests; reauthorized persistently at user request, preserving both user keys",
+  "reverse_tunnel_test": "pending; localhost:2222 connection refused on latest attempt",
+  "launch_bridge_check": "passed via SSH on version 1.3; user confirmed installed UI on version 1.2",
+  "apk_container": "SSH upload/private import/launch passed; guest Activity created/resumed; absent from OS package registry",
+  "build": "full Gradle build with DEX definition gate",
+  "native_swap_device": "passed: two library snapshots, different XR PIDs, same main runtime PID, XR stop preserved SSH",
+  "startup_crash_fix": "Replaced incomplete manually assembled 1.4 preview; restored BlackBox class definitions",
+  "native_openxr_frames": "passed for both uploaded variants; see native-swap-frames.json",
+  "main_activity_start": "Status ok, warm launch 37 ms",
+  "apk_registry_preserved": "quest-app list still contains dev.quest.guestdemo"
+}

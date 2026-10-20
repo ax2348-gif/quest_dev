@@ -1,0 +1,15 @@
+{
+  "version": "1.4-preview",
+  "apk_sha256": "8e7cc08cd26687fa661d42c4a73cb207ab687e71651d1fb020aa408180a3f8de",
+  "signing_certificate_matches_1_3": true,
+  "build": "direct Android SDK tools using verified 1.3 resource/dependency cache; all runtime Java and changed native code recompiled",
+  "device_installed": false,
+  "device_validation": "blocked: sandbox disallows ADB and escalation rejected",
+  "native_library_sha256": "b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617",
+  "java_compile": "passed",
+  "cmake_build": "passed: questhost and questtelemetry",
+  "loader_logic_tests": "4 passed with host-side Android stubs; not device execution",
+  "resources_openxr_loader_dropbear_unchanged": true,
+  "device_swap_script": "test_native_swap.py prepared; not run",
+  "status": "REJECTED/SUPERSEDED: manual preview omitted required BlackBox class definitions; compilation/signature checks were insufficient"
+}

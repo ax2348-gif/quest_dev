@@ -1,0 +1,145 @@
+REPLACEABLE NATIVE APPS — version 1.4.1
+===========================================
+
+STATUS
+
+Version 1.4.1 is built with Gradle and installed on the Quest. SSH authentication,
+two uploaded libraries entering in separate XR processes, an unchanged runtime
+PID across swaps, and stopping XR while preserving SSH have passed on-device.
+Both swapped libraries also produced OpenXR telemetry frames. See
+results/native-swap-device.json and results/native-swap-frames.json.
+The normal runtime window opened successfully after the fix; the previously
+imported APK registry and SSH access were retained. XR was stopped after testing.
+
+The earlier manually assembled 1.4 preview omitted BlackBox class definitions and
+crashed during RuntimeApplication startup. It is superseded. build.sh now checks
+required DEX class definitions and native libraries before publishing the APK.
+The old -native-preview.apk link now contains the corrected full 1.4.1 build too.
+Files and SSH keys were preserved by an in-place update; no reinstall is needed
+on this Quest. The following install command is for future host rebuilds.
+
+ONE-TIME HOST UPDATE (on erid's terminal, with authorized USB ADB)
+
+    cd /home/adrianna/Documents/Codex/2026-10-19/che/outputs/quest-dev-runtime
+    adb -s 340YC10GBF06GV install -r artifacts/quest-dev-runtime.apk
+
+This updates the existing runtime in place. It briefly interrupts SSH; the
+existing update receiver should restart it. It preserves the application's
+files and SSH keys. Reconnect after the update. Do not uninstall the runtime.
+
+If automatic startup was disabled, open Quest developer runtime or run:
+
+    adb -s 340YC10GBF06GV shell content call \
+      --uri content://dev.quest.runtime.files --method start
+
+EVERYDAY LOOP (no APK installation or USB needed after that update)
+
+1. On your development computer, build the telemetry app as a standalone library:
+
+    python3 build_native_app.py
+
+   Output: artifacts/native/telemetry.so
+   Defaults use erid's NDK and already cached OpenXR AAR. On another computer,
+   pass --ndk /path/to/ndk and --openxr-aar /path/to/openxr_loader_for_android-1.1.53.aar.
+
+2. From a computer that can reach the Quest over Tailscale:
+
+    rsync -rt -e 'ssh -p 8022' artifacts/native/telemetry.so \
+      quest@100.72.77.83:workspace/telemetry.so
+
+3. Select it and start it through SSH:
+
+    ssh -p 8022 quest@100.72.77.83 \
+      'quest-native run "$HOME/workspace/telemetry.so"'
+
+   Repeat build/upload/run after editing the native source. run copies the
+   library to a SHA-256-named private snapshot before stopping the previous app.
+   It removes the old XR task, terminates only dev.quest.runtime:xr, atomically
+   selects the new snapshot, and requests the existing NativeActivity again.
+   The SSH service stays in the main process. The new library is loaded with
+   dlopen in the fresh XR process; the previous library is never unloaded live.
+
+COMMANDS INSIDE THE QUEST SSH SHELL
+
+    quest-native status
+    quest-native restart
+    quest-native stop
+    quest-native builtin
+    cat "$HOME/../native/host.log"
+
+restart restarts the currently selected snapshot. It does not read an updated
+upload; use run PATH to select a newly uploaded file. stop terminates the XR
+process only. builtin selects and starts the bundled telemetry implementation,
+providing recovery from an incompatible or crashing uploaded library.
+
+status includes the main runtime PID, current XR PIDs, selection, and latest
+loader result. entry-returned means the native entry function returned after
+installing its activity callbacks; it does NOT establish a working XR session
+or tracking. last_load_process_alive distinguishes stale records after a crash
+or stop. Check host.log for dlopen errors, ABI mismatches and the loaded app name.
+
+For the telemetry example, actual frames are available through SSH:
+
+    ssh -p 8022 quest@100.72.77.83 'nc 127.0.0.1 9391'
+
+Quest privacy locks, sleep, and XR focus still affect tracking. You do not need
+to coordinate launch timing with this agent: run the commands when ready.
+
+BUILDING YOUR OWN APP
+
+    python3 build_native_app.py --source /path/to/my_app.cpp \
+      --name 'My native app' --output artifacts/native/my-app.so
+
+The helper builds a C++ source defining void android_main(android_app*), links
+NDK native_app_glue and the identity shim, uses the static C++ runtime, and links
+the host's OpenXR loader plus Android/EGL/GLES/log libraries. Follow the usual
+native_app_glue lifecycle/event loop. The telemetry source is a working example:
+  app/src/main/cpp/quest_telemetry.cpp
+
+For your own build system, export these C symbols:
+  quest_native_app_v1()       returns a static QuestNativeAppV1 descriptor
+  ANativeActivity_onCreate()  normal NDK NativeActivity entry point
+
+The ABI is defined in native-sdk/quest_native_app.h. Include native-sdk/identity.c
+with QUEST_NATIVE_APP_NAME set to a string literal, or implement the query
+function yourself. Native app glue supplies the standard activity entry point.
+Use Android ARM64, API 28 or newer APIs only when supported by this device.
+ABI version 1 shares NDK/C structures, not C++ objects. The host retains the
+library handle for the entire XR process lifetime.
+
+Scope: one self-contained shared library, system libraries, and the host's
+packaged libopenxr_loader.so. Package your other code/static dependencies into
+that library. Additional .so bundles, per-app assets, Java additions, and new
+manifest permissions are not implemented by this uploader. Your app inherits
+the fixed host activity, manifest features/permissions, app UID and workspace.
+New host permissions or Java integration require a host APK update.
+
+This path does not use BlackBox. The APK container remains available separately
+through quest-app; RuntimeApplication excludes :xr from container initialization.
+Both native apps and APK guests are trusted developer code sharing this app's
+access. Process separation keeps normal restarts/crashes separate from SSH;
+it is not a security boundary against code intentionally killing other processes.
+
+DEVICE VALIDATION
+
+Two library variants are supplied in artifacts/native/. From a tailnet computer:
+
+    python3 test_native_swap.py artifacts/native/telemetry.so \
+      artifacts/native/telemetry-b.so --require-frames
+
+Omit --require-frames to check loading/restarts without requiring an active XR
+session. The script uploads both variants, requires entry-returned from each,
+requires distinct XR PIDs and the same runtime PID, then stops XR and verifies
+SSH still works. It writes native-swap-results.json and leaves XR stopped.
+It checks saved SSH host keys; establish your normal SSH connection first.
+Optional --identity selects an SSH key; --host and --port override the endpoint.
+With --require-frames, missing frames cause a failure instead of a
+false claim that OpenXR was verified.
+
+FULL HOST BUILD (normally needed only for host changes)
+
+    bash build.sh --offline
+
+This produces artifacts/quest-dev-runtime.apk from the full Gradle build.
+The current APK is the corrected full Gradle build, version 1.4.1.
+The standalone library builder does not invoke Gradle or require a daemon.

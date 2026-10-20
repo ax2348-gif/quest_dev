@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'">
+<link rel="stylesheet" href="xterm.css"><link rel="stylesheet" href="terminal.css">
+<title>Quest terminal</title></head><body>
+<main id="panel">
+<header><span class="brand">▸ QUEST</span><span id="label">Terminal</span><span id="state">local shell</span><span class="spacer"></span><button id="new-window" title="Open another independent terminal">＋ Terminal</button><button id="close-window" title="Close this window; keep the shell session">×</button></header>
+<section id="terminal" aria-label="Interactive local terminal"></section>
+<nav aria-label="Terminal keys">
+<button id="keyboard">Keyboard</button><button data-key="\u0003">Ctrl-C</button><button data-key="\u0004">Ctrl-D</button><button data-key="\u001b">Esc</button><button data-key="\t">Tab</button>
+<button data-key="\u001b[A">↑</button><button data-key="\u001b[B">↓</button><button data-key="\u001b[D">←</button><button data-key="\u001b[C">→</button><button data-key="\r">Enter</button>
+<span class="spacer"></span><button id="smaller">A−</button><button id="larger">A+</button>
+</nav>
+<footer>
+<label>Opacity <input id="opacity" type="range" min="25" max="100" value="82"><span id="opacity-value">82%</span></label>
+<label>Brightness <input id="brightness" type="range" min="60" max="140" value="100"><span id="brightness-value">100%</span></label>
+<label>Contrast <input id="contrast" type="range" min="60" max="180" value="100"><span id="contrast-value">100%</span></label>
+<span class="spacer"></span><button id="restart">New shell</button><button id="end-session">End session</button></footer>
+</main><script type="module" src="terminal.js"></script>
+</body></html>

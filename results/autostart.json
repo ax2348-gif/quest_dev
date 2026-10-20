@@ -1,0 +1,14 @@
+{
+  "version": "1.1",
+  "apk_sha256": "2a5774972f3550f532426d06fe4a9f55fb13a747cf265a09305b8ca641ae018c",
+  "package_replaced_autostart": "passed; service was stopped before upgrade and no manual start was issued",
+  "autostart_event": "Tue Oct 20 03:27:25 EDT 2026\nandroid.intent.action.MY_PACKAGE_REPLACED\nUptime ms: 223034\nRequested foreground SSH service\n",
+  "status": "SSH running: quest@100.72.77.83:8022\nWorkspace: /data/user/0/dev.quest.runtime/files/home/workspace\nUID: 10156\nNative XR telemetry: 127.0.0.1:9391 (when XR test is open)\n",
+  "authorized_keys_preserved": true,
+  "host_key_preserved": true,
+  "listener_address": "100.72.77.83:8022",
+  "actual_reboot_test": "passed; no app launch, service-start command, or headset input issued after reboot",
+  "boot_event": "Tue Oct 20 03:28:54 EDT 2026\nandroid.intent.action.BOOT_COMPLETED\nUptime ms: 15727\nRequested foreground SSH service\n",
+  "boot_status": "SSH running: quest@100.72.77.83:8022\nWorkspace: /data/user/0/dev.quest.runtime/files/home/workspace\nUID: 10156\nNative XR telemetry: 127.0.0.1:9391 (when XR test is open)\n",
+  "foreground_service_observed_before_provider_read": true
+}

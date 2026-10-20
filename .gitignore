@@ -1,0 +1,13 @@
+# Generated build files and local configuration
+.gradle/
+.cxx/
+build/
+__pycache__/
+*.py[cod]
+/artifacts/
+local.properties
+# Local credentials and signing keys
+*.jks
+*.keystore
+.env
+.env.*

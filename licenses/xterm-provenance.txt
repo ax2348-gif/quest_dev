@@ -1,0 +1,5 @@
+xterm.js and FitAddon, vendored from the installed Playwright trace-viewer bundle.
+Source bundle SHA256: 17584c22ad7d49f3c3c9e07e8b2655203cd33e60c1cb527356eabfda6a59c830
+Local adaptation: inline its existing CommonJS wrapper instead of importing the Playwright UI bundle.
+Upstream: https://github.com/xtermjs/xterm.js
+License: xterm-MIT.txt

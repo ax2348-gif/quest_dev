@@ -1,0 +1,58 @@
+QUEST LOCAL TERMINALS — runtime 1.5
+===================================
+
+ON THE HEADSET
+
+1. Open Quest developer runtime from the app library.
+2. Press Open new terminal. It opens a separate, resizable Quest window.
+3. Press + Terminal in any terminal, or Open new terminal again, for another
+   independent shell. Each has its own current directory, environment and jobs.
+4. Use Keyboard for the headset keyboard, or type with a hardware keyboard.
+   The toolbar supplies Ctrl-C, Ctrl-D, Esc, Tab, arrows and Enter.
+5. Adjust Opacity for a translucent or opaque background. A-/A+ change text size.
+
+The local shell has the same app identity, home, workspace and installed
+commands as SSH. It works without a network connection.
+
+    quest-native status
+    quest-native restart
+    quest-native stop
+    quest-app list
+    quest-app launch dev.quest.guestdemo
+
+LIFETIME
+
+The terminal's small x closes its window while retaining its shell.
+Use Reopen Terminal N in the original runtime window to return to it.
+New shell replaces only that terminal's shell. End session stops that shell
+and closes its window. These actions ask for confirmation.
+
+Sessions survive closing windows, but not runtime process termination, APK
+updates, force-stop, or headset reboot. Files in $HOME persist. Background jobs
+that deliberately detach may require their own shutdown command.
+
+There is no application-imposed single-terminal limit. Quest controls how
+many panels it can display simultaneously; each additional terminal also uses
+memory. Each shell retains up to 512 KiB of output for reopening, and the
+visible terminal keeps up to 5,000 scrollback lines.
+
+WHAT WAS VERIFIED
+
+Full Gradle build and APK completeness gate passed. Runtime 1.5 was installed
+with adb install -r, preserving workspace and SSH keys. MainActivity opened
+successfully; real SSH login worked after the update. Two distinct local
+interactive shell processes were present. A headset screenshot showed two
+separate terminal panels with prompts and translucent backgrounds over the room.
+Keyboard input executed an echo command, and the rendered shell also showed
+workspace contents from ls.
+
+The extra Git/curl/Wget binaries are a separate update. Their upstream sources
+have been downloaded, but they are not bundled in runtime 1.5.
+
+IMPLEMENTATION
+
+Each session has a real Android PTY and /system/bin/sh. A small native exec
+helper creates the controlling terminal; the Android JVM does not fork itself.
+The packaged xterm terminal frontend is offline, with external navigation and
+network requests blocked. It has no local HTTP server or added TCP listener.
+The local terminal does not elevate Android permissions.

@@ -1,0 +1,51 @@
+{
+  "os_packages_before": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "stop_probe": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "guest_apk_sha256": "df7f0d2619815e29b06832d2128a336f7673bf7e6f6b8e58b4f7521bed5ec037",
+  "upload_over_ssh": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "import_over_ssh": {
+    "exit": 0,
+    "stdout": "{\"ok\":true,\"package\":\"dev.quest.guestdemo\",\"result\":\"private container import\"}\n",
+    "stderr": ""
+  },
+  "list_over_ssh": {
+    "exit": 0,
+    "stdout": "{\"ok\":true,\"apps\":[{\"package\":\"dev.quest.guestdemo\",\"apk\":\"\\/data\\/user\\/0\\/dev.quest.runtime\\/blackbox\\/data\\/app\\/dev.quest.guestdemo\\/base.apk\",\"data\":\"\\/data\\/user\\/0\\/dev.quest.runtime\\/blackbox\\/data\\/user\\/0\\/dev.quest.guestdemo\"}]}\n",
+    "stderr": ""
+  },
+  "invalid_path": {
+    "exit": 2,
+    "stdout": "",
+    "stderr": "APK path: No such file or directory\n"
+  },
+  "launch_over_ssh": {
+    "exit": 0,
+    "stdout": "{\"ok\":true,\"package\":\"dev.quest.guestdemo\",\"result\":\"launch requested\"}\n",
+    "stderr": ""
+  },
+  "os_packages_after": {
+    "exit": 0,
+    "stdout": "",
+    "stderr": ""
+  },
+  "guest_lifecycle": [
+    "10-20 04:02:19.820 11140 11162 D ActivityStack: onActivityCreated : ComponentInfo{dev.quest.guestdemo/dev.quest.uidemo.MainActivity}",
+    "10-20 04:02:19.838 11344 11344 I GuestProof: onCreate package=dev.quest.guestdemo uid=10001 data=/data/user/0/dev.quest.runtime/blackbox/data/user/0/dev.quest.guestdemo/files",
+    "10-20 04:02:19.849 11140 11162 D ActivityStack: onActivityResumed : ComponentInfo{dev.quest.guestdemo/dev.quest.uidemo.MainActivity}"
+  ],
+  "stop_relaunch_ssh": "{\"ok\":true,\"result\":\"guest stopped\"}\n{\"ok\":true,\"apps\":[{\"package\":\"dev.quest.guestdemo\",\"apk\":\"\\/data\\/user\\/0\\/dev.quest.runtime\\/blackbox\\/data\\/app\\/dev.quest.guestdemo\\/base.apk\",\"data\":\"\\/data\\/user\\/0\\/dev.quest.runtime\\/blackbox\\/data\\/user\\/0\\/dev.quest.guestdemo\"}]}\n{\"ok\":true,\"package\":\"dev.quest.guestdemo\",\"result\":\"launch requested\"}\nuid=10156(u0_a156) gid=10156(u0_a156) groups=10156(u0_a156),3003(inet),9997(everybody),20156(u0_a156_cache),50156(all_a156) context=u:r:untrusted_app_27:s0:c156,c256,c512,c768\n",
+  "update_autostart": "Tue Oct 20 04:01:21 EDT 2026\nandroid.intent.action.MY_PACKAGE_REPLACED\nUptime ms: 1962637\nRequested foreground SSH service\n",
+  "user_confirmation": "User confirmed the isolated container guest UI worked; integrated runtime Activity lifecycle verified in logs."
+}

@@ -1,0 +1,30 @@
+APK CONTAINER SOURCE AND LOCAL CHANGES
+
+Upstream: https://github.com/Black00Z/Blacks-BlackBox
+Commit: 40282a7bf4500948cfd598fc67e6e63114b26dd9
+License: BLACKBOX-LICENSE (Apache 2.0)
+Copied modules: Bcore, black-reflection, compiler.
+The upstream UI app and its other dependencies are not included.
+
+Local changes:
+- Android library compiled with SDK 35, Java 17, NDK 27.2, arm64 only.
+- Disable shrinking in the core for this experiment.
+- Remove all upstream manifest permission and hardware-feature requests.
+  The final host requests only the original runtime's permissions.
+- Make proxy components private except services protected by system permissions.
+- Disable cleartext traffic in the merged app manifest.
+- Replace LogSender with a non-networking stub; default report destination null.
+  Host configuration also supplies no report destination. The original fork
+  had crash-log uploads to an external service; those uploads are removed.
+- No VPN service startup or core daemon requested by host configuration.
+- RuntimeApplication initializes the container except in the original :xr process.
+- AppControl/quest-app provide same-UID local IPC for private APK operations.
+
+Native core sources, xdl and the upstream prebuilt Dobby static library are
+included as supplied by this pinned source. Java dependencies resolve through
+Google/Maven Central/JitPack, including FreeReflection 3.2.2. This was a targeted
+integration review, not a complete security audit of the virtualization core.
+
+Build the standalone guest demo (no BlackBox dependency):
+  ./gradlew :guest-demo:assembleRelease
+The release uses the same local development signing setup as the host.

@@ -1,0 +1,55 @@
+{
+  "before": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [],
+    "selected": "builtin"
+  },
+  "first": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [
+      13551
+    ],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+    "last_load": {
+      "pid": 13551,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/b2af030baa116e6e532844b3f23201f3f08b50b8058e9a73606328e7ed1c1617/libapp.so",
+      "detail": "Quest telemetry"
+    },
+    "last_load_process_alive": true,
+    "launch_requested": true
+  },
+  "second": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [
+      13734
+    ],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+    "last_load": {
+      "pid": 13734,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+      "detail": "Quest telemetry B"
+    },
+    "last_load_process_alive": true,
+    "launch_requested": true
+  },
+  "stopped": {
+    "ok": true,
+    "runtime_pid": 13428,
+    "xr_pids": [],
+    "selected": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+    "last_load": {
+      "pid": 13734,
+      "state": "entry-returned",
+      "library": "/data/user/0/dev.quest.runtime/files/native/apps/1284a5963d45f405e4d287c0ba1a37315d6d2fe44278b65feecb58a61afbdf1e/libapp.so",
+      "detail": "Quest telemetry B"
+    },
+    "last_load_process_alive": false,
+    "result": "XR process stopped; SSH remains running"
+  },
+  "passed": true
+}

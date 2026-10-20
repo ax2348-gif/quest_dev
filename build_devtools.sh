@@ -58,6 +58,28 @@ if [[ ! -f "$stage/lib/libcurl.a" ]]; then
 fi
 
 cd "$build_root/git-2.56.0"
+# Generators run on the build host; the compiled Git still uses Android's shell.
+python3 - <<'PY'
+from pathlib import Path
+p=Path("Makefile")
+s=p.read_text().replace("$(QUIET_GEN)$(SHELL_PATH)", "$(QUIET_GEN)$(SHELL)")
+p.write_text(s)
+p=Path("shared.mak")
+p.write_text(p.read_text().replace('$(SHELL_PATH) "$(1)/GIT-VERSION-GEN"', '$(SHELL) "$(1)/GIT-VERSION-GEN"'))
+# Bionic has no thread cancellation. Keep signal-mask handling and pthreads;
+# only the unavailable cancellation-state operations are omitted.
+p=Path("run-command.c")
+s=p.read_text()
+for call in [
+    '\tCHECK_BUG(pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &as->cs),\n\t\t"disabling cancellation");',
+    '\tCHECK_BUG(pthread_setcancelstate(as->cs, NULL),\n\t\t"re-enabling cancellation");',
+]:
+    guarded='#ifndef __ANDROID__\n'+call+'\n#endif'
+    if guarded not in s:
+        assert s.count(call)==1
+        s=s.replace(call,guarded)
+p.write_text(s)
+PY
 cat > config.mak <<CONFIG
 CC = $CC
 AR = $AR
@@ -68,6 +90,7 @@ SHELL_PATH = /system/bin/sh
 SHELL = /bin/sh
 RUNTIME_PREFIX = YesPlease
 NO_GETTEXT = YesPlease
+NO_GECOS_IN_PWENT = YesPlease
 NO_ICONV = YesPlease
 NO_PERL = YesPlease
 NO_PYTHON = YesPlease
@@ -75,12 +98,23 @@ NO_TCLTK = YesPlease
 NO_EXPAT = YesPlease
 NO_REGEX = YesPlease
 NO_OPENSSL = YesPlease
+NO_RUST = YesPlease
+PTHREAD_LIBS =
 NO_INSTALL_HARDLINKS = YesPlease
 CURL_CFLAGS = -I$stage/include
 CURL_LDFLAGS = $stage/lib/libcurl.a $stage/lib/libssl.a $stage/lib/libcrypto.a -ldl -lz
 CURL_CONFIG = $stage/bin/curl-config
 CONFIG
-make -j"$jobs" all
+make -j"$jobs" SHELL=/bin/sh all
+make SHELL=/bin/sh DESTDIR="$build_root/git-install" install
+mkdir -p "$package/devtools"
+cp -a "$build_root/git-install$target_home/devtools/." "$package/devtools/"
+# Keep the client workflow small; omit server/mail integration and Scalar.
+for name in git-daemon git-http-backend git-imap-send git-shell scalar; do
+    rm -f "$package/devtools/bin/$name" "$package/devtools/libexec/git-core/$name"
+done
+rm -f "$package/devtools/libexec/git-core/git"
+ln -s ../../bin/git "$package/devtools/libexec/git-core/git"
 
 cd "$build_root/wget-1.25.0"
 if [[ ! -f Makefile ]]; then
@@ -95,11 +129,15 @@ mkdir -p "$package/devtools/bin" "$package/devtools/libexec/git-core" \
     "$package/devtools/etc" "$package/devtools/share/licenses"
 cp "$stage/bin/curl" "$package/devtools/bin/"
 cp "$build_root/wget-1.25.0/src/wget" "$package/devtools/bin/"
-cp "$build_root/git-2.56.0/git" "$package/devtools/bin/"
-cp "$build_root/git-2.56.0/git-remote-http" "$package/devtools/libexec/git-core/"
-ln -sfn git-remote-http "$package/devtools/libexec/git-core/git-remote-https"
 cp "$runtime_root/vendor/cacert.pem" "$package/devtools/etc/"
-for binary in "$package/devtools/bin/"* "$package/devtools/libexec/git-core/git-remote-http"; do "$STRIP" "$binary"; done
+printf 'ca_certificate = %s/devtools/etc/cacert.pem\n' "$target_home" > "$package/devtools/etc/wgetrc"
+python3 - "$package/devtools" "$STRIP" <<'PY'
+import pathlib,subprocess,sys
+for p in pathlib.Path(sys.argv[1]).rglob("*"):
+    if not p.is_file() or p.is_symlink():continue
+    with p.open("rb") as f:elf=f.read(4)==b"\x7fELF"
+    if elf:subprocess.run([sys.argv[2],str(p)],check=True)
+PY
 cp "$build_root/openssl-3.5.9/LICENSE.txt" "$package/devtools/share/licenses/OpenSSL.txt"
 cp "$build_root/curl-8.23.0/COPYING" "$package/devtools/share/licenses/curl.txt"
 cp "$build_root/git-2.56.0/COPYING" "$package/devtools/share/licenses/Git.txt"

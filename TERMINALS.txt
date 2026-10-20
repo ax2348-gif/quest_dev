@@ -1,4 +1,4 @@
-QUEST LOCAL TERMINALS — runtime 1.5
+QUEST LOCAL TERMINALS — runtime 1.5.1
 ===================================
 
 ON THE HEADSET
@@ -10,6 +10,9 @@ ON THE HEADSET
 4. Use Keyboard for the headset keyboard, or type with a hardware keyboard.
    The toolbar supplies Ctrl-C, Ctrl-D, Esc, Tab, arrows and Enter.
 5. Adjust Opacity for a translucent or opaque background. A-/A+ change text size.
+   Brightness adjusts text/UI intensity. Contrast strengthens muted text and
+   borders. Neither changes the background opacity. Appearance settings persist
+   and are loaded when a terminal window is opened.
 
 The local shell has the same app identity, home, workspace and installed
 commands as SSH. It works without a network connection.
@@ -46,8 +49,13 @@ separate terminal panels with prompts and translucent backgrounds over the room.
 Keyboard input executed an echo command, and the rendered shell also showed
 workspace contents from ls.
 
-The extra Git/curl/Wget binaries are a separate update. Their upstream sources
-have been downloaded, but they are not bundled in runtime 1.5.
+Version 1.5.1 added brightness/contrast; its full build, update install and
+SSH launch passed. Browser checks covered widths 1000/650/400 and verified
+brightness/contrast leave background opacity unchanged. The user confirmed
+the brightness adjustment works on the headset.
+
+Git/curl/Wget were installed separately into the persistent runtime home.
+They work in existing terminals without restarting them; see DEVTOOLS.txt.
 
 IMPLEMENTATION
 

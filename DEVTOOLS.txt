@@ -1,0 +1,85 @@
+QUEST DEVELOPER TOOLS
+====================
+
+The tools are installed into the runtime's persistent home, separately from
+the APK. Existing local terminals and SSH sessions can use them immediately:
+
+    git --version
+    curl --version
+    wget --version
+
+Git 2.56.0, curl 8.23.0, Wget 1.25.0, OpenSSL 3.5.9.
+The download is about 17 MiB; the installed footprint on Quest is about 34 MiB.
+TLS verification uses the included Mozilla CA bundle. Verification is enabled.
+
+GIT WORKFLOW
+
+In a local terminal or SSH shell:
+
+    cd ~/workspace
+    git clone https://github.com/OWNER/APP.git
+    cd APP
+    git pull --ff-only
+
+Replace OWNER/APP with the actual repository. For private HTTPS repositories,
+use the hosting service's supported credentials. This bundle does not yet
+include an outbound SSH client; SSH remote URLs require adding one.
+
+If the repository includes a built library compatible with our native-host ABI:
+
+    quest-native run "$PWD/release/app.so"
+
+If it includes a built Android APK for the private app container:
+
+    quest-app install "$PWD/release/app.apk"
+    quest-app launch your.app.package
+
+These paths are examples; use the repository's actual artifact paths. A
+source-only repository still needs its build step before launching.
+
+To make commits, set your own identity:
+
+    git config --global user.name "Your Name"
+    git config --global user.email "you@example.com"
+
+BUILD AND STORAGE
+
+Build on erid from the downloaded sources:
+
+    bash build_devtools.sh
+
+Artifact: artifacts/quest-devtools-arm64.tar.gz
+Installer: install_devtools.sh (run inside the Quest runtime shell).
+The installer verifies the supplied archive SHA256 and refuses to overwrite
+custom commands with conflicting names.
+
+    sh install_devtools.sh /path/to/archive.tar.gz ARCHIVE_SHA256
+
+Each version is under $HOME/.devtools/releases/<archive-sha256>/devtools.
+$HOME/devtools selects the current release. $HOME/bin/git, curl and wget point
+there. Updating the tools does not reinstall the APK or stop terminal sessions.
+Files persist across APK updates and reboot, but not uninstall/clear-data.
+
+To keep the bundle small, Git GUI, Perl/Python integrations, translations,
+legacy encoding conversion, Git servers, mail sending, and Scalar are omitted.
+Core Git commands, HTTPS transport, shell helpers and repository templates
+are included. HTTPS and normal UTF-8 repositories are the intended workflow.
+
+The build uses the Android ARM64 NDK. Git's Android adjustments select its
+existing no-gecos option, avoid unsupported pthread cancellation calls while
+retaining pthreads, and run build generators with the host shell while embedding
+/system/bin/sh for commands on the Quest.
+
+Source archives and pinned input checksums are retained in vendor/ and
+build_devtools.sh. Licenses accompany the installed tools under
+$HOME/devtools/share/licenses.
+
+DEVICE VALIDATION
+
+Passed on the Quest: curl and wget HTTPS downloads; rejection of an empty CA
+bundle by curl; Git HTTPS clone and pull; local Git init/commit/clone followed
+by a fast-forward pull that actually changed the working-tree file.
+See results/devtools-smoke.txt.
+
+Release archive SHA256:
+a14f5742350952ab11614b59479b2cfc11883e21e5604c8fe9273b2411b1e4e1

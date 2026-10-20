@@ -1,0 +1,13 @@
+git version 2.56.0
+curl 8.23.0 (aarch64-unknown-linux-android) libcurl/8.23.0 OpenSSL/3.5.9 zlib/1.2.13
+Release-Date: 2026-10-14
+GNU Wget 1.25.0 built on linux-android.
+
+Already up to date.
+From /data/user/0/dev.quest.runtime/files/home/tmp/devtools-smoke.tG5pxv/origin
+   0de5ed4..497006b  master     -> origin/master
+Updating 0de5ed4..497006b
+Fast-forward
+ version.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+PASS: HTTPS downloads, certificate rejection, Git HTTPS clone/pull, local commit/clone/update

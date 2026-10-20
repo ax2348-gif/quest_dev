@@ -1,10 +1,11 @@
-TERMINAL UPDATE: version 1.5 is installed. Open new terminal in the runtime
+TERMINAL UPDATE: version 1.5.1 is installed. Open new terminal in the runtime
 window launches a separate translucent terminal. Multiple independent terminals
 are supported. See TERMINALS.txt for controls, session lifetime and validation.
-Git/curl/Wget are not bundled yet; their sources have been downloaded.
+Git/curl/Wget are installed separately in the persistent runtime home and work
+from both local terminals and SSH. See DEVTOOLS.txt for usage and updates.
 Native swapping previously passed on version 1.4.1; see NATIVE-APPS.txt.
 
-QUEST DEVELOPER RUNTIME 1.5 — experimental private SDK 28 app
+QUEST DEVELOPER RUNTIME 1.5.1 — experimental private SDK 28 app
 ========================================================
 
 CONNECT FROM A MACHINE IN YOUR TAILNET
@@ -97,6 +98,7 @@ WHAT IS INSIDE
 
   * Dropbear 2026.94 SSH server, public-key authentication only.
   * rsync 3.5.1.
+  * Git 2.56.0, curl 8.23.0 and Wget 1.25.0 (persistent developer-tools bundle).
   * Android's /system/bin/sh and existing system utilities.
   * Persistent home: /data/user/0/dev.quest.runtime/files/home
   * Persistent project directory: $HOME/workspace

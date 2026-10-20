@@ -1,0 +1,23 @@
+{
+  "version": "1.5.1",
+  "version_code": 8,
+  "apk_sha256": "7fe80ee4e5a2f9e589fc2e409b738c059eaad17c9a063152faba5cd077a87c57",
+  "full_gradle_build_and_completeness_gate": "passed",
+  "update_install": "passed; workspace and SSH keys retained",
+  "main_activity_launch": "passed",
+  "ssh_terminal_launch": "passed",
+  "appearance_browser_checks": {
+    "viewport_widths": [1000, 650, 400],
+    "controls_overflow": false,
+    "javascript_errors": [],
+    "brightness_contrast_preserve_background_opacity": true
+  },
+  "device_feedback": "User confirmed brightness looks good",
+  "devtools": {
+    "archive_sha256": "a14f5742350952ab11614b59479b2cfc11883e21e5604c8fe9273b2411b1e4e1",
+    "installation": "authenticated SSH; no APK reinstall or terminal restart",
+    "validation": "results/devtools-smoke.txt",
+    "installed_footprint": "34M reported by Quest du",
+    "failed_test_release_removed": true
+  }
+}

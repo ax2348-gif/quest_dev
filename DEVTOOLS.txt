@@ -22,8 +22,13 @@ In a local terminal or SSH shell:
     git pull --ff-only
 
 Replace OWNER/APP with the actual repository. For private HTTPS repositories,
-use the hosting service's supported credentials. This bundle does not yet
-include an outbound SSH client; SSH remote URLs require adding one.
+use the hosting service's supported credentials. The optional Termux environment supplies an outbound SSH client:
+
+    quest-termux pkg install openssh
+    quest-termux git clone git@github.com:OWNER/APP.git
+
+Your key or forwarded agent must be authorized by the Git server. See TERMUX.txt
+for installing other prebuilt CLI tools without compilation.
 
 If the repository includes a built library compatible with our native-host ABI:
 

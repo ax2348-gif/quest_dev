@@ -1,0 +1,155 @@
+PREBUILT CLI PACKAGES
+====================
+
+In an existing runtime SSH session or headset terminal:
+
+    quest-termux
+    pkg install jq nano openssh
+    jq --version
+    nano notes.txt
+    exit
+
+Or run one command without entering another shell:
+
+    quest-termux pkg search python
+    quest-termux pkg install python
+    quest-termux python --version
+    quest-termux pkg upgrade
+
+These commands download ARM64 Android binaries from the Termux repositories.
+There is no compilation and no APK update. APT retains normal repository
+signature verification. The bootstrap itself is pinned by SHA256.
+The installed package versions follow the live repository after pkg upgrade.
+The bootstrap already includes Bash, coreutils, curl, nano, APT and dpkg.
+Only install additional tools as needed.
+
+The normal runtime shell remains available. Run `exit` to leave the Termux
+shell. Packages installed here are on PATH inside quest-termux only.
+The existing standalone git/curl/wget still work outside it.
+Inside it, Termux's tools take precedence and runtime commands remain on PATH.
+For example, the existing standalone Git works with the Termux SSH client:
+
+    quest-termux git clone git@github.com:OWNER/REPOSITORY.git
+
+GitHub SSH authentication still requires your own authorized key or forwarded
+agent. Installing openssh does not grant access to GitHub or copy any keys.
+
+HOME AND APP INTEGRATION
+-----------------------
+
+HOME, the current directory, ~/.ssh, and ~/workspace are shared with the normal
+runtime. `quest-termux` opens Bash in the directory where you invoked it.
+Use ~/workspace for repositories, downloaded APKs and native app libraries.
+Commands such as these work in either shell:
+
+    quest-app list
+    quest-app install "$HOME/workspace/example.apk"
+    quest-native status
+    quest-native run "$HOME/workspace/example.so"
+
+Keep files passed to the Android app under real HOME/workspace paths. Paths
+inside the emulated /data/data/com.termux prefix are visible only to processes
+inside PRoot; the Android app cannot resolve those virtual names.
+
+PRoot translates Termux's hardcoded /data/data/com.termux paths to
+~/.quest-termux/guest. Its tracer and loader live separately in
+~/.quest-termux/host, so package upgrades cannot replace a running tracer.
+Both /data/data/com.termux and /data/user/0/com.termux aliases are mapped.
+The app remains the same Android UID. There is no fake root or separate Linux
+distribution. This is a compatibility layer, not a security boundary.
+
+The native XR activity still runs directly in the Android app process.
+PRoot traces CLI child processes only; it does not wrap the rendering loop.
+CLI operations have ptrace overhead, especially process-heavy workloads.
+Avoid running heavy package operations while measuring teleoperation latency.
+
+Exiting a quest-termux invocation terminates its remaining traced children.
+It is intended for interactive tools and foreground commands, not persistent
+background services. The runtime's existing Dropbear SSH service is unchanged.
+Installing the openssh package includes sshd, but does not start it.
+No additional server or listening port is configured by this integration.
+
+COMPATIBILITY LIMITS
+--------------------
+
+Use packages from Termux's Android repository. Ordinary desktop Linux/glibc
+binaries are not interchangeable with Android/Bionic binaries.
+Tools needing root, kernel features, or Termux companion APK services may not
+work. This app is not the Termux APK and does not provide Termux:API integration.
+Nested PRoot environments and debuggers competing for ptrace are not supported.
+Calling quest-termux from inside itself reuses the current environment.
+
+PREPARING THE BUNDLE ON A LINUX COMPUTER
+---------------------------------------
+
+Requires Python 3.11+, curl and dpkg-deb; no Android compiler/SDK:
+
+    python3 prepare_termux.py
+
+Outputs:
+
+    artifacts/quest-termux-aarch64.tar.gz
+    artifacts/quest-termux-aarch64.tar.gz.sha256
+
+Downloads are cached in artifacts/termux-cache. Use --cache DIRECTORY to reuse
+another cache. All inputs are pinned in termux/sources.lock.json. A checksum
+mismatch aborts instead of silently accepting a newer file. If an upstream
+package is removed, retain the existing cache or deliberately update and verify
+the lock file. The tarball normalizes metadata for reproducible output.
+
+INITIAL INSTALL ON THE QUEST
+----------------------------
+
+Transfer the archive, checksum file and install_termux.sh by Git, rsync, or
+SSH stdin redirection. The runtime server does not currently provide SFTP.
+From the normal runtime terminal/SSH shell, in the directory containing them:
+
+    sha="$(cut -d ' ' -f 1 quest-termux-aarch64.tar.gz.sha256)"
+    sh install_termux.sh quest-termux-aarch64.tar.gz "$sha"
+    quest-termux pkg install jq nano openssh
+
+No ADB command is needed. ADB can be used as an SSH transport when this computer
+cannot reach the headset directly through the tailnet.
+The initial archive is about 31 MiB compressed; installed size grows with
+packages. Keep free space for package downloads and extraction.
+
+The installer refuses to overwrite an existing package environment. Repeating
+the same successful install is a no-op and preserves packages and settings.
+Use `quest-termux pkg upgrade` for routine updates, not a new bootstrap overlay.
+If initialization fails, it retains ~/.quest-termux for diagnosis and does not
+publish the launcher. Do not delete a live environment while its shells run.
+Close all quest-termux shells before backing up or moving the environment aside.
+
+The runtime source repository is ~/code/quest-dev-runtime on erid.
+The separate artifact transfer checkout is ~/code/quest_env
+(git@github.com:ax2348-gif/quest_env.git).
+Do not commit a live environment or SSH keys to either repository. A fresh
+bootstrap bundle contains no device credentials. Installing openssh generates
+host keys in the live environment, so that directory is not a release artifact.
+
+PROVENANCE
+----------
+
+Official bootstrap:
+https://github.com/termux/termux-packages/releases
+Official package repository:
+https://packages.termux.dev/apt/termux-main/
+PRoot source and license:
+https://github.com/termux/proot
+Termux path layout:
+https://github.com/termux/termux-packages/wiki/Termux-file-system-layout
+Build recipes, license declarations and corresponding source URLs:
+https://github.com/termux/termux-packages
+
+The bundle retains upstream documentation/license files from the bootstrap
+and host packages. These components have their own licenses; the application
+license does not replace them. Review their redistribution obligations before
+publishing binary bundles beyond this development workflow.
+
+VALIDATED ON THIS QUEST
+-----------------------
+
+Installed jq 1.8.2, nano 9.2 and OpenSSH 10.6p1; package upgrades, HTTPS,
+interactive nano, shared HOME/cwd and the app-control bridge passed.
+Installed size after clearing the package cache: 116 MiB.
+See results/termux-smoke.txt and tests/termux-smoke.sh.

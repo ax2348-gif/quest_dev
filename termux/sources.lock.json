@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "architecture": "aarch64",
+  "bootstrap": {
+    "version": "bootstrap-2026.10.18-r1+apt.android-7",
+    "url": "https://github.com/termux/termux-packages/releases/download/bootstrap-2026.10.18-r1%2Bapt.android-7/bootstrap-aarch64.zip",
+    "sha256": "7b170ff5ef0befe501d01febc61382f3c6e34456521853cff9ba0b277aa52fe9"
+  },
+  "host_packages": [
+    {
+      "name": "proot",
+      "version": "5.1.107.98",
+      "url": "https://packages.termux.dev/apt/termux-main/pool/main/p/proot/proot_5.1.107.98_aarch64.deb",
+      "sha256": "29de40efea4daa2a6168b617915206511c63e8d46bf5f4b07d48723441ef7f3b"
+    },
+    {
+      "name": "libtalloc",
+      "version": "2.5.0",
+      "url": "https://packages.termux.dev/apt/termux-main/pool/main/libt/libtalloc/libtalloc_2.5.0_aarch64.deb",
+      "sha256": "556591f43bb773ad8777e1a29522640866a55f95dab71914418b94a8c58ad5a7"
+    },
+    {
+      "name": "libandroid-shmem",
+      "version": "0.7",
+      "url": "https://packages.termux.dev/apt/termux-main/pool/main/liba/libandroid-shmem/libandroid-shmem_0.7_aarch64.deb",
+      "sha256": "0da3a24d558b93c92bcf8d611e0826a99ff96e396b148e6cdf33b47c47c57ff6"
+    }
+  ]
+}

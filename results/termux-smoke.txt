@@ -1,0 +1,42 @@
+Quest Termux package environment validation — 2026-10-20
+=======================================================
+Device: Quest 3S, Android 14/API 34, ARM64, runtime dev.quest.runtime 1.5.1.
+Bootstrap: bootstrap-2026.10.18-r1+apt.android-7.
+Host tracer: Termux PRoot 5.1.107.98 with libtalloc 2.5.0 and libandroid-shmem 0.7.
+Bundle SHA256: 5584f482f4d804b57f04686353d99e1d5a56a964c8ece653ada1aa627787c958
+
+Passed on the final installed environment:
+- Bootstrap second-stage initialization under the existing Android app UID.
+- pkg install -y jq nano openssh, fetching signed repository metadata/packages.
+- pkg upgrade -y (actually upgraded command-not-found 3.5.0-15 to 3.5.0-16).
+- tests/termux-smoke.sh: output below.
+- Interactive default Bash shell over SSH PTY, nano screen display, Ctrl-X,
+  return to Bash and successful shell exit (24x80, xterm-256color).
+- OpenSSH client keyscan of the existing runtime Dropbear server; its ED25519
+  fingerprint matched the previously pinned host key. No client authentication
+  to GitHub was attempted and no private key was copied.
+- Reinstalling the same bundle preserved installed jq and settings.
+- Installer rejected an intentionally incorrect archive SHA256.
+- Rebuilding the bundle from the pinned inputs produced identical bytes.
+- Existing runtime process PID 5168 remained alive; no APK update was used.
+- No sshd started; only the existing Dropbear service was observed.
+
+Final footprint after apt-get clean: 116 MiB. Temporary prototype and upload
+archive removed. Existing standalone developer tools were retained.
+The native XR app was not running during this test; rendering latency under
+concurrent CLI load was not measured. No headset-side visual inspection was
+needed for the CLI installation; nano's PTY output was checked programmatically.
+
+Smoke output:
+-------------
+true
+ GNU nano, version 9.2
+OpenSSH_10.6p1, OpenSSL 3.6.5 29 Sep 2026
+git version 2.56.0
+{"ok":true,"runtime_pid":5168,"xr_pids":[],"selected":"builtin","last_load":{"pid":8496,"state":"entry-returned","library":"libquesttelemetry.so","detail":"Quest telemetry"},"last_load_process_alive":false}
+{"ok":true,"apps":[{"package":"dev.quest.guestdemo","apk":"\/data\/user\/0\/dev.quest.runtime\/blackbox\/data\/app\/dev.quest.guestdemo\/base.apk","data":"\/data\/user\/0\/dev.quest.runtime\/blackbox\/data\/user\/0\/dev.quest.guestdemo"}]}
+Reading package lists...
+Building dependency tree...
+Reading state information...
+git version 2.56.0
+PASS: shared HOME/cwd, arguments, nested entry, exit status, CLI tools, HTTPS, package database, app bridge

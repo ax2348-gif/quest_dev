@@ -4,8 +4,10 @@ are supported. See TERMINALS.txt for controls, session lifetime and validation.
 Git/curl/Wget are installed separately in the persistent runtime home and work
 from both local terminals and SSH. See DEVTOOLS.txt for usage and updates.
 Native swapping previously passed on version 1.4.1; see NATIVE-APPS.txt.
+Optional prebuilt CLI packages: run quest-termux, then pkg install PACKAGE.
+This shares the runtime home/workspace and requires no APK update. See TERMUX.txt.
 
-QUEST DEVELOPER RUNTIME 1.5.1 — experimental private SDK 28 app
+QUEST DEVELOPER RUNTIME 1.5.2 — experimental private SDK 28 app
 ========================================================
 
 CONNECT FROM A MACHINE IN YOUR TAILNET
@@ -337,3 +339,16 @@ Version 1.3 verification: SSH authentication, upload, private import/list,
 guest Activity create/resume, stop/relaunch and original installed-app lookup
 passed. Guest stayed absent from Android package registry. SSH and guest registry
 remained available after stopping the guest. See results/apk-container.json.
+
+VALIDATED TELEMETRY + TERMINAL CHECKPOINT (2026-10-20)
+--------------------------------------------------
+Enable Seamless Multitasking in Quest Settings. Without it, even minimized
+panels can keep OpenXR NOT_FOCUSED; closing the last panel restores focus.
+The user confirmed enabling this setting fixes terminal/controller coexistence.
+Use qr, leave the terminal visible, and return input to XR using Meta.
+
+Runtime: version 1.5.2 (code 9), with Horizon SDK 69 declarations and labeled
+2D/native activities. Installed APK SHA256:
+d79e5bd7b54a22496d6f3837106630953abe1d83b537afae71a1c1b02fc1d197
+Telemetry delivery: quest_env commit 3d1ca98.
+The missing Meta app name is unresolved; no registered App ID is configured.

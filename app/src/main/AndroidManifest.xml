@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:metavr="http://schemas.meta.com/metavr-sdk">
+    <metavr:uses-metavr-sdk metavr:minSdkVersion="69" metavr:targetSdkVersion="69" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -21,11 +23,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TerminalActivity" android:exported="false"
+        <activity android:name=".TerminalActivity" android:exported="false" android:label="Quest terminal"
             android:theme="@style/QuestTerminalTheme"
             android:resizeableActivity="true" android:documentLaunchMode="intoExisting"
             android:taskAffinity="dev.quest.runtime.terminal"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.oculus.intent.category.2D" />
+            </intent-filter>
             <layout android:defaultWidth="1000dp" android:defaultHeight="650dp"
                 android:minWidth="400dp" android:minHeight="300dp" />
         </activity>
@@ -40,13 +47,16 @@
         <provider android:name=".RuntimeFiles" android:authorities="dev.quest.runtime.files"
             android:exported="true" android:permission="android.permission.DUMP" />
         <activity android:name="android.app.NativeActivity" android:process=":xr"
+            android:label="Quest telemetry" android:resizeableActivity="false"
             android:exported="true" android:launchMode="singleTask" android:taskAffinity="dev.quest.runtime.native"
             android:configChanges="screenSize|screenLayout|orientation|keyboardHidden|keyboard|navigation|uiMode"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+            <meta-data android:name="com.oculus.vr.focusaware" android:value="true" />
             <meta-data android:name="android.app.lib_name" android:value="questhost" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="org.khronos.openxr.intent.category.IMMERSIVE_HMD" />
                 <category android:name="com.oculus.intent.category.VR" />
             </intent-filter>

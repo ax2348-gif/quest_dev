@@ -178,7 +178,18 @@ Read the latest automatic-start event:
       --uri content://dev.quest.runtime.files/autostart
 
 Android may still kill processes. Long-duration sleep/power behavior remains
-an experiment to validate. The normal SSH connection does not use USB once
+an experiment to validate.
+
+PROCESS LAYOUT: the SSH service and dropbear run in their own
+":ssh" process. The main process holds the BlackBox container, terminals and
+the launch bridge (ControlService, bound by the SSH service so Android keeps
+and recreates it); ":xr" holds the native XR activity. A crash in the main
+process no longer stops SSH. A force-stop still ends every process.
+The listener survives up to 10 s of the Tailscale address disappearing (the
+Tailscale app rebuilds its VPN interface on reconfiguration) before stopping.
+Each time the SSH service starts, and whenever the main process dies, Android's
+recorded exit reasons for this app (LOW_MEMORY, CRASH_NATIVE, USER_REQUESTED
+for force-stop, ...) are appended to runtime.log as "[exit]" lines. The normal SSH connection does not use USB once
 Tailscale and this service run.
 
 Android boot/storage reference:

@@ -12,8 +12,14 @@ import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.*;
 
-/** One key-only SSH listener bound to the configured Tailscale IPv4 address. */
+/**
+ * One key-only SSH listener bound to the configured Tailscale IPv4 address.
+ * Runs in its own ":ssh" process; the launch bridge lives in ControlService (main process).
+ */
 public class RuntimeService extends Service {
+    /** Ticks (2 s each) the address may be missing before the listener is stopped. Tailscale
+     *  rebuilds its VPN interface on reconfiguration; a bound listener survives that gap. */
+    private static final int ADDRESS_GRACE_TICKS = 5;
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
     private volatile Process server;
     private PowerManager.WakeLock wakeLock;
@@ -21,7 +27,14 @@ public class RuntimeService extends Service {
     private String boundIp = "";
     private volatile boolean stopped;
     private String lastStatus = "";
-    private AppControl control;
+    private int addressMissing;
+    private final ServiceConnection controlConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName name, IBinder service) {}
+        public void onServiceDisconnected(ComponentName name) {
+            android.util.Log.w("QuestRuntime", "Main process died; Android will recreate the launch bridge");
+            logPreviousExits();   // record why, while SSH keeps running
+        }
+    };
 
     public void onCreate() {
         super.onCreate();
@@ -40,8 +53,9 @@ public class RuntimeService extends Service {
             .setSmallIcon(android.R.drawable.stat_notify_sync).setContentIntent(show)
             .addAction(new Notification.Action.Builder(null, "Stop listener", stop).build())
             .setOngoing(true).build());
-        try { RuntimeEnvironment.prepare(this); control = new AppControl(this); }
-        catch (Exception e) { android.util.Log.e("QuestRuntimeControl", "Launch bridge unavailable", e); }
+        logPreviousExits();
+        // Keeps the main process (launch bridge) alive and recreated while SSH runs.
+        bindService(new Intent(this, ControlService.class), controlConnection, BIND_AUTO_CREATE);
         wakeLock = getSystemService(PowerManager.class).newWakeLock(
             PowerManager.PARTIAL_WAKE_LOCK, "QuestRuntime:SSH");
         wakeLock.acquire();
@@ -96,7 +110,41 @@ public class RuntimeService extends Service {
     }
     private synchronized void stopListener() {
         if (server != null) { server.destroy(); server = null; }
-        boundIp = "";
+        boundIp = ""; addressMissing = 0;
+    }
+    /** Append why this app's processes last died (Android 11+), once per event, to runtime.log. */
+    private void logPreviousExits() {
+        if (Build.VERSION.SDK_INT < 30) return;
+        try {
+            File seen = new File(root, "exit_reasons_seen");
+            long since = seen.exists() ? Long.parseLong(read(seen)) : 0, newest = since;
+            List<ApplicationExitInfo> exits = getSystemService(ActivityManager.class)
+                .getHistoricalProcessExitReasons(null, 0, 16);
+            StringBuilder out = new StringBuilder();
+            for (int i = exits.size() - 1; i >= 0; i--) {   // oldest first
+                ApplicationExitInfo e = exits.get(i);
+                if (e.getTimestamp() <= since) continue;
+                newest = Math.max(newest, e.getTimestamp());
+                out.append(String.format(Locale.ROOT,
+                    "[exit] %tF %<tT %s pid=%d reason=%s status=%d importance=%d pss=%dkB rss=%dkB %s%n",
+                    new Date(e.getTimestamp()), e.getProcessName(), e.getPid(),
+                    exitReason(e.getReason()), e.getStatus(), e.getImportance(),
+                    e.getPss(), e.getRss(), e.getDescription() == null ? "" : e.getDescription()));
+            }
+            if (out.length() > 0)
+                Files.write(logFile.toPath(), out.toString().getBytes(StandardCharsets.UTF_8),
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND);
+            Files.write(seen.toPath(), Long.toString(newest).getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            android.util.Log.w("QuestRuntime", "Could not record previous exit reasons", e);
+        }
+    }
+    private static String exitReason(int reason) {
+        String[] names = {"UNKNOWN", "EXIT_SELF", "SIGNALED", "LOW_MEMORY", "CRASH", "CRASH_NATIVE",
+            "ANR", "INITIALIZATION_FAILURE", "PERMISSION_CHANGE", "EXCESSIVE_RESOURCE_USAGE",
+            "USER_REQUESTED", "USER_STOPPED", "DEPENDENCY_DIED", "OTHER", "FREEZER",
+            "PACKAGE_STATE_CHANGE", "PACKAGE_UPDATED"};
+        return reason >= 0 && reason < names.length ? names[reason] : Integer.toString(reason);
     }
     private void tick() {
         if (stopped) return;
@@ -108,8 +156,13 @@ public class RuntimeService extends Service {
             Os.chmod(keys.getAbsolutePath(), 0600);
             String ip = configuredIp();
             if (ip.isEmpty()) {
+                if (server != null && server.isAlive() && ++addressMissing < ADDRESS_GRACE_TICKS) {
+                    status("SSH running: Tailscale address briefly missing, keeping the listener.");
+                    return;
+                }
                 stopListener(); status("Waiting for the configured Tailscale address."); return;
             }
+            addressMissing = 0;
             if (server != null && server.isAlive() && boundIp.equals(ip)) return;
             stopListener(); initialize();
             if (logFile.length() > 1024 * 1024) Files.delete(logFile.toPath());
@@ -136,7 +189,7 @@ public class RuntimeService extends Service {
     }
     public void onDestroy() {
         stopped = true; worker.shutdownNow(); stopListener();
-        if (control != null) control.close();
+        unbindService(controlConnection);
         if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
         try { status("SSH listener stopped. Existing authenticated sessions may remain open."); }
         catch (IOException ignored) {}

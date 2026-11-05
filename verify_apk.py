@@ -4,6 +4,7 @@ import argparse,struct,zipfile
 REQUIRED={
  'Ldev/quest/runtime/RuntimeApplication;',
  'Ldev/quest/runtime/RuntimeService;',
+ 'Ldev/quest/runtime/ControlService;',
  'Ldev/quest/runtime/NativeApps;',
  'Ldev/quest/runtime/AppControl;',
  'Ldev/quest/runtime/TerminalActivity;',

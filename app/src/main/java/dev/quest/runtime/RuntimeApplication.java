@@ -10,7 +10,8 @@ public final class RuntimeApplication extends Application {
  protected void attachBaseContext(Context base) {
   super.attachBaseContext(base);
   String name=Application.getProcessName();
-  containerProcess=!name.equals("dev.quest.runtime:xr");
+  // BlackBox would type any other process as a guest; :xr and :ssh must stay plain.
+  containerProcess=!name.equals("dev.quest.runtime:xr")&&!name.equals("dev.quest.runtime:ssh");
   if(!containerProcess)return;
   BlackBoxCore.get().doAttachBaseContext(base,new ClientConfiguration(){
    public String getHostPackageName(){return "dev.quest.runtime";}

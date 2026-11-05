@@ -29,7 +29,9 @@
             <layout android:defaultWidth="1000dp" android:defaultHeight="650dp"
                 android:minWidth="400dp" android:minHeight="300dp" />
         </activity>
-        <service android:name=".RuntimeService" android:exported="false" />
+        <!-- SSH runs apart from the BlackBox container and terminals: their crashes cannot kill it. -->
+        <service android:name=".RuntimeService" android:exported="false" android:process=":ssh" />
+        <service android:name=".ControlService" android:exported="false" />
         <receiver android:name=".BootReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

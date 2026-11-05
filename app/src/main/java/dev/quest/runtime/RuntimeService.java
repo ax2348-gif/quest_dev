@@ -20,6 +20,11 @@ public class RuntimeService extends Service {
     /** Ticks (2 s each) the address may be missing before the listener is stopped. Tailscale
      *  rebuilds its VPN interface on reconfiguration; a bound listener survives that gap. */
     private static final int ADDRESS_GRACE_TICKS = 5;
+    /** Watchdog period: re-requests this service so Android's own restart is never the only path. */
+    private static final long WATCHDOG_MS = 5 * 60 * 1000;
+    /** Present while the service is intentionally stopped; ControlService then does not restart it. */
+    static final String STOPPED_FLAG = "ssh_stopped";
+    private Notification notification;
     private final ScheduledExecutorService worker = Executors.newSingleThreadScheduledExecutor();
     private volatile Process server;
     private PowerManager.WakeLock wakeLock;
@@ -44,16 +49,20 @@ public class RuntimeService extends Service {
             NotificationManager.IMPORTANCE_LOW));
         PendingIntent show = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class),
             PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent stop = PendingIntent.getService(this, 1,
-            new Intent(this, RuntimeService.class).setAction("stop"),
-            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-        startForeground(8022, new Notification.Builder(this, "runtime")
+        // No stop action here: stopping SSH by accident from the notification shade left it off
+        // until the app was reopened. Stop from the app window or over ADB instead.
+        notification = new Notification.Builder(this, "runtime")
             .setContentTitle("Quest developer runtime")
             .setContentText("SSH on Tailscale • port 8022")
             .setSmallIcon(android.R.drawable.stat_notify_sync).setContentIntent(show)
-            .addAction(new Notification.Action.Builder(null, "Stop listener", stop).build())
-            .setOngoing(true).build());
+            .setOngoing(true).build();
+        startForeground(8022, notification);
+        new File(root, STOPPED_FLAG).delete();
         logPreviousExits();
+        // Repeating alarms outlive this process (not a force-stop or reboot; the boot receiver
+        // covers reboot). Each firing is a no-op start if SSH is already running.
+        getSystemService(AlarmManager.class).setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+            SystemClock.elapsedRealtime() + WATCHDOG_MS, WATCHDOG_MS, watchdog(this));
         // Keeps the main process (launch bridge) alive and recreated while SSH runs.
         bindService(new Intent(this, ControlService.class), controlConnection, BIND_AUTO_CREATE);
         wakeLock = getSystemService(PowerManager.class).newWakeLock(
@@ -62,8 +71,15 @@ public class RuntimeService extends Service {
         worker.scheduleWithFixedDelay(this::tick, 0, 2, TimeUnit.SECONDS);
     }
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && "stop".equals(intent.getAction())) stopSelf();
+        // Every startForegroundService (app window, watchdog, ControlService) must be answered
+        // with startForeground, even when the service is already running in the foreground.
+        startForeground(8022, notification);
         return START_STICKY;
+    }
+    static PendingIntent watchdog(Context context) {
+        return PendingIntent.getForegroundService(context, 2,
+            new Intent(context, RuntimeService.class).setAction("watchdog"),
+            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
     }
     public IBinder onBind(Intent i) { return null; }
 
@@ -182,13 +198,18 @@ public class RuntimeService extends Service {
                 + "Workspace: " + new File(home, "workspace") + "\n"
                 + "UID: " + android.os.Process.myUid() + "\n"
                 + "Telemetry example: 127.0.0.1:9391 (when selected and running)");
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            // Throwable, not Exception: an Error escaping here would silently cancel the
+            // scheduled tick and leave SSH down while the service looks alive.
             stopListener();
             try { status("SSH paused: " + e.getMessage()); } catch (IOException ignored) {}
         }
     }
     public void onDestroy() {
+        // Only an intentional stop reaches onDestroy; a killed process never does.
         stopped = true; worker.shutdownNow(); stopListener();
+        getSystemService(AlarmManager.class).cancel(watchdog(this));
+        try { new File(root, STOPPED_FLAG).createNewFile(); } catch (IOException ignored) {}
         unbindService(controlConnection);
         if (wakeLock != null && wakeLock.isHeld()) wakeLock.release();
         try { status("SSH listener stopped. Existing authenticated sessions may remain open."); }

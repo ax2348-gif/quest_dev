@@ -189,7 +189,14 @@ The listener survives up to 10 s of the Tailscale address disappearing (the
 Tailscale app rebuilds its VPN interface on reconfiguration) before stopping.
 Each time the SSH service starts, and whenever the main process dies, Android's
 recorded exit reasons for this app (LOW_MEMORY, CRASH_NATIVE, USER_REQUESTED
-for force-stop, ...) are appended to runtime.log as "[exit]" lines. The normal SSH connection does not use USB once
+for force-stop, ...) are appended to runtime.log as "[exit]" lines.
+
+RECOVERY: if the ":ssh" process dies, Android restarts the sticky service and
+the main process also requests it; a repeating alarm re-requests it every
+5 minutes (a no-op while running). The SSH check loop survives any error.
+The notification no longer has a stop action. Stopping from the app window or
+over ADB cancels the alarm and the restart request. A force-stop still disables
+all of this until the app is opened, started over ADB, or the headset reboots. The normal SSH connection does not use USB once
 Tailscale and this service run.
 
 Android boot/storage reference:

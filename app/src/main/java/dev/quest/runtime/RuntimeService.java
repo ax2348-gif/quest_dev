@@ -19,6 +19,7 @@ public class RuntimeService extends Service {
     private PowerManager.WakeLock wakeLock;
     private File root, home, logFile;
     private String boundIp = "";
+    private static final String LOOPBACK = "127.0.0.1";
     private volatile boolean stopped;
     private String lastStatus = "";
     private AppControl control;
@@ -84,6 +85,9 @@ public class RuntimeService extends Service {
     }
     private String configuredIp() throws Exception {
         String ip = read(new File(root, "tailnet_ip"));
+        // Loopback: reachable only from this headset and through `adb forward tcp:8022 tcp:8022`
+        // (USB or wireless debugging), so a computer needs no Tailscale. Always up.
+        if (ip.equals("127.0.0.1")) return ip;
         if (!ip.matches("100\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}"))
             throw new IOException("Expected a Tailscale IPv4 address");
         String[] octets = ip.split("\\.");
@@ -106,26 +110,34 @@ public class RuntimeService extends Service {
                 stopListener(); status("Provision authorized_keys before starting SSH."); return;
             }
             Os.chmod(keys.getAbsolutePath(), 0600);
+            // Loopback is always served (for `adb forward tcp:8022 tcp:8022`); the configured Tailscale
+            // address too while it is up. "127.0.0.1" as the configured address = loopback only.
             String ip = configuredIp();
+            String want;
             if (ip.isEmpty()) {
-                stopListener(); status("Waiting for the configured Tailscale address."); return;
+                want = LOOPBACK;
+            } else {
+                want = ip.equals(LOOPBACK) ? LOOPBACK : ip + " " + LOOPBACK;
             }
-            if (server != null && server.isAlive() && boundIp.equals(ip)) return;
+            if (server != null && server.isAlive() && boundIp.equals(want)) return;
             stopListener(); initialize();
             if (logFile.length() > 1024 * 1024) Files.delete(logFile.toPath());
-            Process child = command(new File(home, "bin/dropbear").toString(),
-                "-F", "-s", "-j", "-k", "-p", ip + ":8022",
-                "-r", new File(root, "ssh_host_ed25519_key").toString(),
-                "-P", new File(root, "dropbear.pid").toString())
+            List<String> args = new ArrayList<>(Arrays.asList(new File(home, "bin/dropbear").toString(),
+                "-F", "-s", "-j", "-k"));
+            for (String a : want.split(" ")) { args.add("-p"); args.add(a + ":8022"); }
+            args.addAll(Arrays.asList("-r", new File(root, "ssh_host_ed25519_key").toString(),
+                "-P", new File(root, "dropbear.pid").toString()));
+            Process child = command(args.toArray(new String[0]))
                 .redirectOutput(ProcessBuilder.Redirect.appendTo(logFile)).start();
             synchronized (this) {
                 if (stopped) { child.destroy(); return; }
-                server = child; boundIp = ip;
+                server = child; boundIp = want;
             }
             if (child.waitFor(250, TimeUnit.MILLISECONDS)) {
                 stopListener(); status("SSH exited. Inspect runtime.log for details."); return;
             }
-            status("SSH running: quest@" + ip + ":8022\n"
+            status("SSH running: quest@" + want.replace(" ", ", ") + " port 8022"
+                + (ip.isEmpty() ? " (configured Tailscale address missing)" : "") + "\n"
                 + "Workspace: " + new File(home, "workspace") + "\n"
                 + "UID: " + android.os.Process.myUid() + "\n"
                 + "Telemetry example: 127.0.0.1:9391 (when selected and running)");

@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
         terminals=new LinearLayout(this);terminals.setOrientation(LinearLayout.VERTICAL);
         layout.addView(terminals);
         TextView note = new TextView(this);
-        note.setText("\nSSH uses public keys and your configured Tailscale address on port 8022.\n"
+        note.setText("\nSSH uses public keys on port 8022: your configured Tailscale address, and loopback for adb forwarding.\n"
             + "Workspace persists across app restarts. Uninstalling erases it.\n"
             + "Running the service keeps the CPU awake and uses battery.");
         layout.addView(note);

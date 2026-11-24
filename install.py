@@ -12,7 +12,9 @@ p.add_argument("--serial", required=True)
 p.add_argument("--authorized-keys", type=pathlib.Path, required=True)
 p.add_argument("--tailnet-ip", required=True)
 args = p.parse_args()
-assert ipaddress.ip_address(args.tailnet_ip) in ipaddress.ip_network("100.64.0.0/10")
+assert (args.tailnet_ip == "127.0.0.1"
+        or ipaddress.ip_address(args.tailnet_ip) in ipaddress.ip_network("100.64.0.0/10")), \
+    "--tailnet-ip: a Tailscale address, or 127.0.0.1 for adb forwarding (adb forward tcp:8022 tcp:8022)"
 keys = args.authorized_keys.read_bytes()
 assert keys.strip() and b"PRIVATE KEY" not in keys, "Provide public keys only"
 adb = ["adb", "-s", args.serial]

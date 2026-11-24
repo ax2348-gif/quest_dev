@@ -6,7 +6,8 @@ build_root="${QUEST_RUNTIME_BUILD_DIR:-$runtime_root/build/native-tools}"
 mkdir -p "$build_root"
 build_root="$(cd "$build_root" && pwd)"
 ndk="${ANDROID_HOME:-/tmp/teleop_tools/android}/ndk/27.2.12479018"
-toolchain="$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin"
+host_tag="$(uname -s | tr '[:upper:]' '[:lower:]')-x86_64"   # linux-x86_64, or darwin-x86_64 (universal on Apple Silicon)
+toolchain="$ndk/toolchains/llvm/prebuilt/$host_tag/bin"
 export CC="$toolchain/aarch64-linux-android28-clang"
 export CXX="$toolchain/aarch64-linux-android28-clang++"
 export AR="$toolchain/llvm-ar" RANLIB="$toolchain/llvm-ranlib"
@@ -18,7 +19,7 @@ mkdir -p "$dest" "$runtime_root/artifacts"
 cd "$build_root"
 cp "$runtime_root/vendor/dropbear-2026.94.tar.bz2" .
 cp "$runtime_root/vendor/rsync-3.5.1.tar.gz" .
-sha256sum -c <<'HASHES'
+shasum -a 256 -c <<'HASHES'   # shasum: on Linux and macOS alike
 e098034a843699200c8c977a991fff73159735bf795d5f72ef672c41a6b1ae81  dropbear-2026.94.tar.bz2
 c55f9c9dc10fb8bec397b399a0fdded53cc9a2d8e30891bb0d63724d25c37bef  rsync-3.5.1.tar.gz
 HASHES

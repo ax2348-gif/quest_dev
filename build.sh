@@ -8,7 +8,8 @@ export GRADLE_USER_HOME="${GRADLE_USER_HOME:-/tmp/teleop_tools/gradle}"
 if [[ ! -f app/src/main/jniLibs/arm64-v8a/libdropbearmulti.so ]]; then
     bash ./build_native.sh
 fi
-cc="$ANDROID_HOME/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android28-clang"
+host_tag="$(uname -s | tr '[:upper:]' '[:lower:]')-x86_64"   # linux-x86_64, or darwin-x86_64 (universal on Apple Silicon)
+cc="$ANDROID_HOME/ndk/27.2.12479018/toolchains/llvm/prebuilt/$host_tag/bin/aarch64-linux-android28-clang"
 "$cc" -O2 -Wall -Wextra -Werror -fPIE -pie -Wl,-z,max-page-size=16384 \
     app/src/main/cpp/quest_pty_shell.c -o app/src/main/jniLibs/arm64-v8a/libquestptyshell.so
 "$cc" -O2 -Wall -Wextra -Werror -fPIE -pie -Wl,-z,max-page-size=16384 \

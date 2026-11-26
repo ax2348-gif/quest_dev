@@ -12,14 +12,14 @@ own headset: its addresses and serials are not yours.
 ## How it is installed and configured
 
 - **Normally:** by robot_utils' setup wizard (`tools/quest_teleop/quest_setup.py`) over USB. It installs the
-  pinned APK (`artifacts/quest-dev-runtime.apk` at tag `collab-v2`, SHA-256 checked), then configures the runtime
+  pinned APK (`artifacts/quest-dev-runtime.apk` at tag `collab-v4`, 1.7.0, SHA-256 checked), then configures the runtime
   through its content provider.
 - **By hand:** `install.py --serial S --authorized-keys FILE --tailnet-ip ADDR` does the same (SETUP.md).
 - **Provider** `content://dev.quest.runtime.files` (`adb shell content ...`; adb's shell identity only):
   - write `/authorized_keys` (replaces the whole set) and `/tailnet_ip`;
   - read `/status`, `/log`, `/autostart`, `/host_public_key`;
   - `call --method start|stop`.
-- **Version line:** 1.6.0 is the 1.5.3 line from erid (Termux environment, multitasking, terminal windows) plus
+- **Version line:** 1.7.0 (collab-v4) is 1.6.0 plus the body-tracking permission; 1.6.0 (collab-v2) is the 1.5.3 line from erid (Termux environment, multitasking, terminal windows) plus
   the loopback listener. The SSH-process isolation on `main` (Nov 5, never run on a headset) is not in it.
 - **Listening** (1.6.0, branch `collab`): always on `127.0.0.1:8022`, for `adb forward tcp:8022 tcp:8022`; plus
   the configured Tailscale address while that address is up. `tailnet_ip` set to `127.0.0.1` means loopback only.
@@ -33,10 +33,11 @@ own headset: its addresses and serials are not yours.
   guest and server processes, so native apps have exactly this manifest's permissions, granted by the real system
   to `dev.quest.runtime`. 1.7.0 declares `com.oculus.permission.BODY_TRACKING` (a runtime permission) and the
   optional feature `com.oculus.software.body_tracking`, for quest_env's `q run --body` (BODY_TRACKING.md).
-  It is granted in one of three ways:
-  - by the wizard over USB (`adb shell pm grant dev.quest.runtime com.oculus.permission.BODY_TRACKING`);
-  - by MainActivity, which asks once when the app is opened from Library;
-  - by MainActivity's "Allow body tracking" button.
+  On the owner's headset (collab-v4) it is **granted with the install**; `adb shell pm grant` is refused for it,
+  so the wizard does not try (the 1.7.0 build's MainActivity text still mentions the wizard). If it is ever not
+  granted:
+  - MainActivity asks once when the app is opened from Library;
+  - MainActivity's "Allow body tracking" button.
   Check it with `adb shell dumpsys package dev.quest.runtime | grep BODY_TRACKING`. A reinstall that keeps the data
   keeps the grant; an uninstall loses it.
 

@@ -1,7 +1,7 @@
 # Setting up a headset
 
 **The easy way:** plug the headset in and run robot_utils' setup wizard, `python3 tools/quest_teleop/quest_setup.py`.
-It installs Tailscale and this runtime (the pinned APK of tag `collab-v2`, SHA-256 checked), authorises an SSH
+It installs Tailscale and this runtime (the pinned APK of tag `collab-v4`, 1.7.0, SHA-256 checked), authorises an SSH
 key, sets the runtime's Tailscale address, adds `Host quest` to `~/.ssh/config` and installs quest_env. It is safe
 to rerun after a failure. The checklist and troubleshooting are in robot_utils' guide:
 [docs/quest_setup.md](https://github.com/ax2348-gif/robot_utils/blob/collab/docs/quest_setup.md).
@@ -16,7 +16,7 @@ reference; its addresses, USB serial and key fingerprints belong to the maintain
   <https://pkgs.tailscale.com/stable/#android>; install it with `adb install`, then sign in inside the headset.
   Note the headset's `100.x.y.z` address.
 - An SSH key pair. Only the public key goes to the headset.
-- The APK: `artifacts/quest-dev-runtime.apk` on branch `collab` / tag `collab-v2`, or build it (AGENTS.md,
+- The APK: `artifacts/quest-dev-runtime.apk` on branch `collab` / tag `collab-v4`, or build it (AGENTS.md,
   "Building").
 
 ## Install and provision

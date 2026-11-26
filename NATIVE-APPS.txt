@@ -113,6 +113,8 @@ that library. Additional .so bundles, per-app assets, Java additions, and new
 manifest permissions are not implemented by this uploader. Your app inherits
 the fixed host activity, manifest features/permissions, app UID and workspace.
 New host permissions or Java integration require a host APK update.
+Since 1.7.0 the host declares com.oculus.permission.BODY_TRACKING (runtime permission;
+see AGENTS.md) for native apps that use Meta body tracking.
 
 This path does not use BlackBox. The APK container remains available separately
 through quest-app; RuntimeApplication excludes :xr from container initialization.

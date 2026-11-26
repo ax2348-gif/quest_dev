@@ -7,9 +7,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Meta body tracking for native apps (quest_env BODY_TRACKING.md): a runtime permission,
+         asked for by MainActivity or granted by the setup wizard (pm grant). -->
+    <uses-permission android:name="com.oculus.permission.BODY_TRACKING" />
     <uses-feature android:name="android.hardware.vr.headtracking" android:required="true" />
     <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="true" />
     <uses-feature android:name="com.oculus.feature.BOUNDARYLESS_APP" android:required="true" />
+    <uses-feature android:name="com.oculus.software.body_tracking" android:required="false" />
     <queries>
         <provider android:authorities="org.khronos.openxr.runtime_broker;org.khronos.openxr.system_runtime_broker" />
     </queries>

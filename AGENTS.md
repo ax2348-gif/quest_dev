@@ -28,6 +28,18 @@ own headset: its addresses and serials are not yours.
 - **Starting:** automatic after boot and after updates, once keys and an address are configured. A force-stop
   disables that until the app is opened from Library → Unknown sources, or `call --method start`.
 
+- **Permissions for native apps** (1.7.0): a native library runs in this APK's own `:xr` process as
+  `android.app.NativeActivity`. BlackBox is not initialised there (`RuntimeApplication`), and its hooks run only in
+  guest and server processes, so native apps have exactly this manifest's permissions, granted by the real system
+  to `dev.quest.runtime`. 1.7.0 declares `com.oculus.permission.BODY_TRACKING` (a runtime permission) and the
+  optional feature `com.oculus.software.body_tracking`, for quest_env's `q run --body` (BODY_TRACKING.md).
+  It is granted in one of three ways:
+  - by the wizard over USB (`adb shell pm grant dev.quest.runtime com.oculus.permission.BODY_TRACKING`);
+  - by MainActivity, which asks once when the app is opened from Library;
+  - by MainActivity's "Allow body tracking" button.
+  Check it with `adb shell dumpsys package dev.quest.runtime | grep BODY_TRACKING`. A reinstall that keeps the data
+  keeps the grant; an uninstall loses it.
+
 ## Building
 
 - **Host:** Linux x86-64, or macOS (the scripts pick the NDK's `darwin-x86_64` prebuilt).
@@ -52,7 +64,7 @@ own headset: its addresses and serials are not yours.
   or no later build can update headsets in place. Builds up to 1.5.3 were signed by a key that is lost (it lived
   in erid's deleted `/tmp/teleop_tools`); the setup wizard migrates such headsets (backup, reinstall, restore).
 - **Releasing for collaborators:**
-  1. Force-add the APK on branch `collab` (`artifacts/` is ignored), with a version bump in `app/build.gradle` (versionCode above every build ever installed: 11 for 1.6.0).
+  1. Force-add the APK on branch `collab` (`artifacts/` is ignored), with a version bump in `app/build.gradle` (versionCode above every build ever installed: 11 for 1.6.0, 12 for 1.7.0).
   2. Tag it.
   3. Update `RUNTIME_VERSION`, `RUNTIME_URL` and `RUNTIME_SHA256` in robot_utils' `quest_setup.py`.
 
